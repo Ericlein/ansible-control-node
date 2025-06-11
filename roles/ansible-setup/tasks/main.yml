@@ -6,3 +6,6 @@
 
 - import_tasks: ansible-galaxy-collection.yml
   tags: ansible-galaxy
+
+- import_tasks: install-yum-utils.yml
+  tags: install-yum-utils

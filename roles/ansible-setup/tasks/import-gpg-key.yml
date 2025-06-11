@@ -1,0 +1,4 @@
+- name: Import GPG key
+  ansible.builtin.rpm_key:
+    key: https://rpm.releases.hashicorp.com/gpg
+    state: present

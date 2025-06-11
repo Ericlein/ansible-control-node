@@ -1,0 +1,4 @@
+- name: Install Vault
+  ansible.builtin.yum:
+    name: vault
+    state: present
