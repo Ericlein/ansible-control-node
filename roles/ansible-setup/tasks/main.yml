@@ -9,3 +9,21 @@
 
 - import_tasks: install-yum-utils.yml
   tags: install-yum-utils
+
+- import_tasks: import-gpg-key.yml
+  tags: import-gpg-key
+
+- import_tasks: add-hashicorp-repo.yml
+  tags: add-hashicorp-repo
+
+- import_tasks: vault-install.yml
+  tags: vault-install
+
+- import_tasks: vault-environment.yml
+  tags: vault-environment
+
+- import_tasks: pip-install.yml
+  tags: pip-install
+
+- import_tasks: pip-packages.yml
+  tags: pip-packages

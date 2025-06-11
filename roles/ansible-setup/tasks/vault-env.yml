@@ -1,0 +1,20 @@
+- name: Check if Vault credentials are available
+  ansible.builtin.fail:
+    msg: "Required environment variables VAULT_ROLE_ID and/or VAULT_SECRET_ID are not set. Set them in environment or pass them using -e 'vault_role_id=VALUE vault_secret_id=VALUE'"
+  when: (lookup('env', 'VAULT_ROLE_ID') == '' or lookup('env', 'VAULT_SECRET_ID') == '') and 
+        (vault_role_id is not defined or vault_secret_id is not defined)
+
+- name: Set Vault credentials as facts
+  set_fact:
+    vault_role_id: "{{ lookup('env', 'VAULT_ROLE_ID') }}"
+    vault_secret_id: "{{ lookup('env', 'VAULT_SECRET_ID') }}"
+    vault_addr: "{{ vault_addr }}"
+
+- name: Add Vault environment variables to .bashrc
+  ansible.builtin.blockinfile:
+    path: "{{ lookup('env', 'HOME') }}/.bashrc"
+    block: |
+      export VAULT_ADDR="{{ vault_addr }}"
+      export VAULT_SECRET_ID="{{ vault_secret_id }}"
+      export VAULT_ROLE_ID="{{ vault_role_id }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - VAULT CONFIGURATION"
