@@ -1,2 +1,5 @@
 - import_tasks: git.yml 
   tags: git
+
+- import_tasks: ansible-configuration.yml
+  tags: ansible-configuration
