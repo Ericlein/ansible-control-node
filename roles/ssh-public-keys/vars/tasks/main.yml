@@ -1,1 +1,7 @@
-# Nothing
+---
+- name: Add SSH public keys to the authorized keys file
+  ansible.builtin.authorized_key:
+    user: "{{ user }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ ssh_public_keys }}"
