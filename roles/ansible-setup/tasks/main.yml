@@ -1,4 +1,4 @@
-- import_tasks: git.yml 
+- import_tasks: git.yml
   tags: git
 
 - import_tasks: ansible-configuration.yml
@@ -27,3 +27,9 @@
 
 - import_tasks: pip-packages.yml
   tags: pip-packages
+
+- import_tasks: users.yml
+  tags: users
+
+- import_tasks: bashrc.yml
+  tags: bashrc

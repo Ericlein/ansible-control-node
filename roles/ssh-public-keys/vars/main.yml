@@ -1,0 +1,9 @@
+---
+user: "root"
+ssh_users:
+  - name: eric
+    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCUvys0SaeRkZ0TYg833OuOF4cUkIFNb9w0JLy4z0xd1Xdud+AXcUk1IjDsOi9HtKECtzm1NKhyTWYURGTQwid8ODxYWqs6Ds7Hr3sD8QA9wgaAEqieRn9HLOpDh7BVszg+E65dejiPYeuhHP1Fyj9vNRG9cLtQuud+/2h+2q9P2lKrTjdu00hMnYvDNAsR/N4dcCdINnWsq0roL2lGvU24MRQGpKP4xYG+8NPLhF24T7iqgoVxVLK4oS2uxb2J85QPnPSVuyb9TYytQAVfD/6peRRrtik9/qwzuIYKihCA6CV3BU5inNuq5FoaAVkpjgj34mF6AaAvmdhiGXdmyM+8YbyOFbb+ORjj5EkQUiXRB/hfnht6+QAHTgZbkV4zFusXUTH4WXAVvVgK0eC6TpaKqIl+UtkXa3YQga2/O41sIXEKiIeVyPECtMUnInt+5N7gfYsX6lVknyBSKQqnr3Eem1JsK96WDaFBHFess28TwKe9X2wEcmpk/Bd6EkfY8VBo6aXfuG6cmUMsmyJJ1unacQ/FuAeINLs9NniL5+VtrsCp0JrsFHiNwjZR8LMv7N6xSnHK4sp0vo3cRtNLmQCEAMDHpKS7Oi2xz1SZX1UinZAMXg2AtCmjxFBYaLLWyDzzFbpeOyYN03Mtxj6yb2k9it7pdPQyvGTfqFcFiAtzdQ== eric@laurila.se"
+  - name: ansible
+    ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAXXXXXXXXXXXXXXXXXXXXX root@ansible"
+
+ssh_public_keys: "{{ ssh_users | map(attribute='ssh_key') | list }}"
