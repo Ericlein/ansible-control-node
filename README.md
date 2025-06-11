@@ -1,6 +1,8 @@
-# ansible-bootstrap
+![ansible-bootstrap](https://skillicons.dev/icons?i=ansible)
+# ansible-control-node
 
-Setup a new Ansible server in seconds with automated configuration, user management, and HashiCorp Vault integration.
+
+Complete setup and configuration of an Ansible control node (master server) with HashiCorp Vault integration, user management, and development environment.
 
 ## Overview
 
