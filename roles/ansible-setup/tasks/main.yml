@@ -3,3 +3,6 @@
 
 - import_tasks: ansible-configuration.yml
   tags: ansible-configuration
+
+- import_tasks: ansible-galaxy-collection.yml
+  tags: ansible-galaxy
