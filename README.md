@@ -25,30 +25,98 @@ This project provides a complete Ansible playbook to bootstrap a new Ansible con
 
 ## Quick Start
 
-1. **Clone the repository**:
+### Step 1: Initial Setup
+
+1. **Fork and clone this repository**:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/yourusername/ansible-bootstrap.git
    cd ansible-bootstrap
    ```
 
-2. **Configure your inventory**:
-   Edit `hosts/production/hosts` and update:
-   - `ansible_host` - IP address of your target server
-   - `hostname` - FQDN of your server
-   - `server_id` - Unique server identifier
+2. **Create your own Ansible repository** (if you don't have one):
+   - Create a new GitHub repository (e.g., `yourorg/ansible`)
+   - This will store your actual Ansible playbooks and configurations
+   - Make note of the SSH clone URL: `git@github.com:yourorg/ansible.git`
 
-3. **Set Vault credentials** (if using Vault):
-   ```bash
-   export VAULT_ROLE_ID="your-role-id"
-   export VAULT_SECRET_ID="your-secret-id"
+### Step 2: Configuration
+
+3. **Update the Git repository reference**:
+   Edit `roles/ansible-setup/tasks/git.yml` and change:
+   ```yaml
+   repo: git@github.com:yourorg/ansible.git  # Replace with your repo
    ```
 
-4. **Configure users**:
-   Edit `roles/ssh-public-keys/vars/main.yml` to add your SSH public keys
+4. **Configure your target server inventory**:
+   Edit `hosts/production/hosts`:
+   ```ini
+   [ansible]
+   ansible_server ansible_host=192.168.1.100 hostname=ansible.yourdomain.com server_id=PROD001
+   
+   [vault]
+   vault_server ansible_host=192.168.1.101 hostname=vault.yourdomain.com server_id=PROD002
+   ```
+   Replace with your actual:
+   - Server IP addresses
+   - Hostnames/FQDNs
+   - Server identifiers
 
-5. **Run the playbook**:
+5. **Configure Vault server** (if using HashiCorp Vault):
+   Edit `hosts/production/group_vars/vault.yml`:
+   ```yaml
+   vault_addr: "https://vault.yourdomain.com:8200"  # Your Vault server URL
+   ```
+
+6. **Add your SSH public keys and users**:
+   Edit `roles/ssh-public-keys/vars/main.yml`:
+   ```yaml
+   ssh_users:
+     - name: yourusername           # Replace with your username
+       ssh_key: "ssh-rsa AAAAB3... yourusername@yourdomain.com"  # Your SSH public key
+     - name: ansible                # Keep this for automation
+       ssh_key: "ssh-rsa AAAAB3... root@ansible"                 # Ansible server's public key
+   ```
+
+### Step 3: Environment Setup
+
+7. **Set up SSH access**:
+   - Ensure you can SSH to your target server as root
+   - Your SSH public key should be in the target server's `/root/.ssh/authorized_keys`
+
+8. **Set Vault credentials** (if using Vault):
    ```bash
-   ansible-playbook -i hosts/production/hosts playbooks/ansible-setup.yml -e create_users="eric,ansible"
+   export VAULT_ROLE_ID="your-vault-role-id"
+   export VAULT_SECRET_ID="your-vault-secret-id"
+   ```
+
+### Step 4: Deploy
+
+9. **Test connectivity**:
+   ```bash
+   make ping
+   ```
+
+10. **Run the bootstrap playbook**:
+   ```bash
+   make deploy
+   ```
+   
+   Or manually:
+   ```bash
+   ansible-playbook -i hosts/production/hosts playbooks/ansible-setup.yml
+   ```
+
+### Step 5: Verification
+
+11. **Verify the setup**:
+   ```bash
+   make check
+   ```
+
+12. **SSH to your new Ansible server**:
+   ```bash
+   ssh yourusername@your-ansible-server
+   cd ansible
+   ansible --version
    ```
 
 ## Configuration
@@ -112,16 +180,16 @@ Run specific parts of the setup using tags:
 
 ```bash
 # Install only Git components
-ansible-playbook playbooks/ansible-setup.yml -t git
+ansible-playbook ... --tags git
 
 # Setup only user accounts
-ansible-playbook playbooks/ansible-setup.yml -t users
+ansible-playbook ... --tags users
 
 # Configure only Ansible
-ansible-playbook playbooks/ansible-setup.yml -t ansible-configuration
+ansible-playbook ... --tags ansible-configuration
 
 # Install Vault only
-ansible-playbook playbooks/ansible-setup.yml -t vault-install
+ansible-playbook ... --tags vault-install
 ```
 
 ## What Gets Configured
@@ -147,8 +215,8 @@ ansible-playbook playbooks/ansible-setup.yml -t vault-install
 
 The playbook uses these environment variables:
 
-- `VAULT_ROLE_ID` - Vault role ID
-- `VAULT_SECRET_ID` - Vault secret ID
+- `VAULT_ROLE_ID` - Vault AppRole role ID
+- `VAULT_SECRET_ID` - Vault AppRole secret ID
 - `VAULT_ADDR` - Vault server address (set from group_vars)
 
 ## Troubleshooting
