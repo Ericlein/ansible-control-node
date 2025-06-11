@@ -1,0 +1,5 @@
+[ansible]
+ansible_server ansible_host=127.0.0.1 hostname=ansible.com server_id=XXXXX
+
+[vault]
+vault_server ansible_host=127.0.0.1 hostname=vault.com server_id=XXXXX
