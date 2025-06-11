@@ -9,6 +9,6 @@
   notify: reload iptables
 
 - name: Ensure iptables-persistent is installed
-  apt:
+  yum:
     name: iptables-persistent
     state: present

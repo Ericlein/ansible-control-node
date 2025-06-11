@@ -5,5 +5,5 @@
 - name: ansible-setup
   tags: ansible-setup
 
-- namne: ssh-public-keys
+- name: ssh-public-keys
   tags: ssh-public-keys
