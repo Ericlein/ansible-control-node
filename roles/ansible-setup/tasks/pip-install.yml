@@ -1,3 +1,8 @@
+- name: Install Python 3.11
+  ansible.builtin.yum:
+    name: python3.11
+    state: present
+
 - name: Download get-pip.py
   ansible.builtin.get_url:
     url: https://bootstrap.pypa.io/get-pip.py
