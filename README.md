@@ -1,4 +1,6 @@
-# ansible-bootstrap
+![ansible-bootstrap](https://skillicons.dev/icons?i=ansible)
+# ansible-server-setup
+
 
 Setup a new Ansible server in seconds with automated configuration, user management, and HashiCorp Vault integration.
 
