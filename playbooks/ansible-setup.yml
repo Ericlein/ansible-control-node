@@ -2,8 +2,9 @@
 - name: Setup Ansible server
   hosts: ansible
 
-- name: ansible-setup
-  tags: ansible-setup
+  roles:
+  - name: ansible-setup
+    tags: ansible-setup
 
-- name: ssh-public-keys
-  tags: ssh-public-keys
+  - name: ssh-public-keys
+    tags: ssh-public-keys
