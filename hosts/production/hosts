@@ -1,5 +1,11 @@
 [ansible_rhel]
-ansible_server ansible_host=YOUR_SERVER_IP hostname=YOUR_HOSTNAME
+rhel-server1 ansible_host=192.168.1.100 hostname=rhel-ansible1.example.com
+rhel-server2 ansible_host=192.168.1.101 hostname=rhel-ansible2.example.com
 
 [ansible_ubuntu]
-ansible_server ansible_host=YOUR_SERVER_IP hostname=YOUR_HOSTNAME
+ubuntu-server1 ansible_host=192.168.1.110 hostname=ubuntu-ansible1.example.com
+ubuntu-server2 ansible_host=192.168.1.111 hostname=ubuntu-ansible2.example.com
+
+[ansible:children]
+ansible_rhel
+ansible_ubuntu
