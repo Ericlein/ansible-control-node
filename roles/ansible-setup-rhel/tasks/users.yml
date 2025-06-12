@@ -1,6 +1,6 @@
 - name: Include SSH keys
   include_vars:
-    file: "/root/ansible/roles/ssh-public-keys/vars/main.yml"
+    file: "/root/ansible-control-node/roles/ssh-public-keys/vars/main.yml"
 
 - name: Get SSH users to create
   set_fact:
