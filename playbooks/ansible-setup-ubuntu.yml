@@ -13,8 +13,8 @@
       tags: always
 
   roles:
-    - name: ansible-setup-ubuntu
-      tags: ansible-setup-ubuntu
-
     - name: ssh-public-keys
       tags: ssh-public-keys
+
+    - name: ansible-setup-ubuntu
+      tags: ansible-setup-ubuntu
