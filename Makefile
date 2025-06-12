@@ -18,37 +18,41 @@ NC = \033[0m
 .PHONY: help deploy deploy-rhel deploy-ubuntu check ping
 
 help: ## Show this help message
-	@echo "$(GREEN)Ansible Bootstrap - Single Inventory$(NC)"
+	@echo "$(GREEN)Ansible Bootstrap - Multi-OS Support$(NC)"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*
+	@echo "Available targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(YELLOW)%-15s$(NC) %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Variables:"
+	@echo "  $(YELLOW)USERS$(NC)     = $(USERS)"
+	@echo "  $(YELLOW)LIMIT$(NC)     = $(LIMIT)"
+	@echo "  $(YELLOW)INVENTORY$(NC) = $(INVENTORY)"
 
-## 🛡️ Security Improvements
+deploy: ## Deploy to all systems (auto-detect OS)
+	@echo "$(GREEN)Deploying to RHEL systems...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_RHEL) --limit ansible_rhel $(ANSIBLE_OPTS) || true
+	@echo "$(GREEN)Deploying to Ubuntu systems...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_UBUNTU) --limit ansible_ubuntu $(ANSIBLE_OPTS) || true
 
-### 4. **Enhance Security Configurations**
+deploy-rhel: ## Deploy to RHEL/CentOS systems only
+	@echo "$(GREEN)Deploying to RHEL systems...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_RHEL) --limit ansible_rhel $(ANSIBLE_OPTS)
 
-#### **iptables Template Update**
-```jinja2
-# roles/*/templates/iptables.j2
-*filter
-:INPUT ACCEPT [0:0]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [0:0]
-:IN-filtered-ssh - [0:0]
+deploy-ubuntu: ## Deploy to Ubuntu/Debian systems only
+	@echo "$(GREEN)Deploying to Ubuntu systems...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_UBUNTU) --limit ansible_ubuntu $(ANSIBLE_OPTS)
 
-# Allow loopback
--A INPUT -i lo -j ACCEPT
+check: ## Check playbook syntax
+	@echo "$(GREEN)Checking RHEL playbook syntax...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_RHEL) --syntax-check
+	@echo "$(GREEN)Checking Ubuntu playbook syntax...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_UBUNTU) --syntax-check
 
-# Allow established connections
--A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+ping: ## Test connectivity to all hosts
+	@echo "$(GREEN)Testing connectivity...$(NC)"
+	@ansible -i $(INVENTORY) all -m ping --limit $(LIMIT)
 
-# SSH filtering
--A INPUT -p tcp -m tcp --dport 22 -j IN-filtered-ssh
--A IN-filtered-ssh -s 127.0.0.1 -j ACCEPT -m comment --comment "Localhost"
-{% for allowed_ip in ssh_allowed_ips | default(['127.0.0.1']) %}
--A IN-filtered-ssh -s {{ allowed_ip }} -j ACCEPT -m comment --comment "Allowed IP"
-{% endfor %}
--A IN-filtered-ssh -j DROP
-
-# Drop everything else
--A INPUT -j DROP
-COMMIT
+clean: ## Clean retry files
+	@echo "$(GREEN)Cleaning retry files...$(NC)"
+	@find . -name "*.retry" -delete
+	@echo "Retry files cleaned."

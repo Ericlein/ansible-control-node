@@ -1,0 +1,8 @@
+- name: git checkout from github
+  ansible.builtin.git:
+    repo: git@github.com:username/ansible.git
+    dest: /root/ansible
+    update: no
+    accept_newhostkey: true
+  environment:
+    GIT_TERMINAL_PROMPT: "0"

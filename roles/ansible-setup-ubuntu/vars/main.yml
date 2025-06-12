@@ -1,5 +1,15 @@
 python_version: "3.11"
 vault_repo_url: "https://apt.releases.hashicorp.com"
+
+# Users to create (referenced in users.yml)
+create_users:
+  - eric
+  - ansible
+
+# SSH allowed IPs for iptables (add your actual IPs)
+ssh_allowed_ips:
+  - "YOUR_IP_ADDRESS"  # Replace with your actual IP
+
 required_packages:
   - wget
   - curl
@@ -16,3 +26,15 @@ python_packages:
   - python3.11-venv
   - python3.11-dev
   - python3-pip
+
+pip_packages:
+  - "hvac>=1.2.0,<2.0.0"
+  - "PyMySQL>=1.0.0"
+  - "jmespath>=1.0.0"
+  - "passlib[bcrypt]>=1.7.0"
+  - "pywinrm>=0.4.0"
+  - "requests>=2.28.0"
+  - "cryptography>=3.4.0"
+
+hashicorp_packages:
+  - vault
