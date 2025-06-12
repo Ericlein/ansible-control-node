@@ -1,108 +1,69 @@
-# Ansible Bootstrap Makefile
-# Usage: make <target> [USERS=<user1,user2>]
+# Ansible Bootstrap Makefile - Multi-OS Support
+# Usage: make <target> [USERS=<user1,user2>] [OS=<rhel|ubuntu|mixed>]
 
 # Default variables
-INVENTORY ?= hosts/production/hosts
-PLAYBOOK ?= playbooks/ansible-setup.yml
+OS ?= rhel
+INVENTORY_RHEL ?= hosts/production/hosts-rhel
+INVENTORY_UBUNTU ?= hosts/production/hosts-ubuntu
+INVENTORY_MIXED ?= hosts/production/hosts-mixed
+PLAYBOOK_RHEL ?= playbooks/ansible-setup-rhel.yml
+PLAYBOOK_UBUNTU ?= playbooks/ansible-setup-ubuntu.yml
+PLAYBOOK_UNIFIED ?= playbooks/ansible-setup-unified.yml
 USERS ?= eric,ansible
 ANSIBLE_OPTS ?= 
+
+# Set inventory and playbook based on OS
+ifeq ($(OS),ubuntu)
+    INVENTORY := $(INVENTORY_UBUNTU)
+    PLAYBOOK := $(PLAYBOOK_UBUNTU)
+else ifeq ($(OS),mixed)
+    INVENTORY := $(INVENTORY_MIXED)
+    PLAYBOOK := $(PLAYBOOK_UNIFIED)
+else
+    INVENTORY := $(INVENTORY_RHEL)
+    PLAYBOOK := $(PLAYBOOK_RHEL)
+endif
 
 # Color codes for output
 GREEN = \033[0;32m
 YELLOW = \033[0;33m
 RED = \033[0;31m
-NC = \033[0m # No Color
+NC = \033[0m
 
-.PHONY: help deploy check ping syntax lint clean install-deps
+.PHONY: help deploy deploy-rhel deploy-ubuntu deploy-mixed check ping
 
-# Default target
 help: ## Show this help message
-	@echo "$(GREEN)Ansible Bootstrap - Available Commands:$(NC)"
+	@echo "$(GREEN)Ansible Bootstrap - Multi-OS Support$(NC)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(YELLOW)%-20s$(NC) %s\n", $1, $2}'
 	@echo ""
 	@echo "$(GREEN)Examples:$(NC)"
-	@echo "  make deploy                              # Deploy with default users"
-	@echo "  make deploy USERS='alice,bob'           # Deploy with specific users"
-	@echo "  make check                               # Dry run"
-	@echo "  make ping                                # Test connectivity"
+	@echo "  make deploy                              # Deploy to RHEL (default)"
+	@echo "  make deploy OS=ubuntu                   # Deploy to Ubuntu"
+	@echo "  make deploy OS=mixed                    # Deploy to mixed environment"
+	@echo "  make deploy-ubuntu USERS='alice,bob'    # Deploy Ubuntu with specific users"
 
-deploy: ## Deploy Ansible bootstrap to servers
-	@echo "$(GREEN)Deploying Ansible bootstrap...$(NC)"
+deploy: ## Deploy Ansible bootstrap (specify OS=rhel|ubuntu|mixed)
+	@echo "$(GREEN)Deploying Ansible bootstrap for $(OS)...$(NC)"
 	@echo "$(YELLOW)Users: $(USERS)$(NC)"
 	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) -e create_users="$(USERS)" $(ANSIBLE_OPTS)
 
-check: ## Run deployment in check mode (dry run)
-	@echo "$(GREEN)Running deployment check (dry run)...$(NC)"
+deploy-rhel: ## Deploy to RHEL/CentOS systems
+	@echo "$(GREEN)Deploying to RHEL/CentOS systems...$(NC)"
+	ansible-playbook -i $(INVENTORY_RHEL) $(PLAYBOOK_RHEL) -e create_users="$(USERS)" $(ANSIBLE_OPTS)
+
+deploy-ubuntu: ## Deploy to Ubuntu/Debian systems
+	@echo "$(GREEN)Deploying to Ubuntu/Debian systems...$(NC)"
+	ansible-playbook -i $(INVENTORY_UBUNTU) $(PLAYBOOK_UBUNTU) -e create_users="$(USERS)" $(ANSIBLE_OPTS)
+
+deploy-mixed: ## Deploy to mixed environment
+	@echo "$(GREEN)Deploying to mixed environment...$(NC)"
+	ansible-playbook -i $(INVENTORY_MIXED) $(PLAYBOOK_UNIFIED) -e create_users="$(USERS)" $(ANSIBLE_OPTS)
+
+check: ## Run deployment in check mode
+	@echo "$(GREEN)Running deployment check for $(OS)...$(NC)"
 	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) -e create_users="$(USERS)" --check --diff $(ANSIBLE_OPTS)
 
 ping: ## Test connectivity to all hosts
-	@echo "$(GREEN)Testing connectivity to hosts...$(NC)"
+	@echo "$(GREEN)Testing connectivity to $(OS) hosts...$(NC)"
 	ansible -i $(INVENTORY) all -m ping
-
-syntax: ## Check playbook syntax
-	@echo "$(GREEN)Checking playbook syntax...$(NC)"
-	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) --syntax-check
-
-lint: ## Run ansible-lint on playbooks
-	@echo "$(GREEN)Running ansible-lint...$(NC)"
-	@command -v ansible-lint >/dev/null 2>&1 || { echo "$(RED)ansible-lint not found. Install with: pip install ansible-lint$(NC)"; exit 1; }
-	ansible-lint $(PLAYBOOK)
-
-# Individual role targets
-deploy-git: ## Deploy only Git configuration
-	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) --tags git -e create_users="$(USERS)" $(ANSIBLE_OPTS)
-
-deploy-users: ## Deploy only user management
-	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) --tags users -e create_users="$(USERS)" $(ANSIBLE_OPTS)
-
-deploy-vault: ## Deploy only Vault components
-	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) --tags vault-install,vault-environment -e create_users="$(USERS)" $(ANSIBLE_OPTS)
-
-deploy-ansible: ## Deploy only Ansible configuration
-	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) --tags ansible-configuration,ansible-galaxy -e create_users="$(USERS)" $(ANSIBLE_OPTS)
-
-# Utility targets
-install-deps: ## Install required Python packages (if needed)
-	@echo "$(GREEN)Installing Python dependencies...$(NC)"
-	@echo "$(YELLOW)Note: Python packages are installed automatically by the playbook$(NC)"
-
-clean: ## Clean up temporary files
-	@echo "$(GREEN)Cleaning up temporary files...$(NC)"
-	find . -name "*.retry" -delete
-	find . -name "*.pyc" -delete
-	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
-
-facts: ## Gather facts from all hosts
-	@echo "$(GREEN)Gathering facts from hosts...$(NC)"
-	ansible -i $(INVENTORY) all -m setup
-
-list-hosts: ## List all hosts in inventory
-	@echo "$(GREEN)Hosts in inventory:$(NC)"
-	ansible -i $(INVENTORY) all --list-hosts
-
-list-tags: ## List all available tags
-	@echo "$(GREEN)Available tags:$(NC)"
-	ansible-playbook -i $(INVENTORY) $(PLAYBOOK) --list-tags
-
-# Verbose deployment
-deploy-verbose: ## Deploy with verbose output
-	$(MAKE) deploy ANSIBLE_OPTS="-vvv"
-
-# Emergency/Recovery
-emergency-deploy: ## Deploy with maximum verbosity and no host key checking
-	@echo "$(RED)Emergency deployment - bypassing host key checking!$(NC)"
-	$(MAKE) deploy ANSIBLE_OPTS="-vvv --ssh-extra-args='-o StrictHostKeyChecking=no'"
-
-# Development helpers
-dev-check: ## Run syntax check and lint
-	$(MAKE) syntax
-	$(MAKE) lint
-
-# Show configuration
-show-config: ## Show current configuration
-	@echo "$(GREEN)Current Configuration:$(NC)"
-	@echo "$(YELLOW)Inventory:$(NC) $(INVENTORY)"
-	@echo "$(YELLOW)Playbook:$(NC) $(PLAYBOOK)"
-	@echo "$(YELLOW)Default Users:$(NC) $(USERS)"
-	@echo "$(YELLOW)Ansible Options:$(NC) $(ANSIBLE_OPTS)"

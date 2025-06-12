@@ -1,0 +1,9 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:IN-filtered-ssh - [0:0]
+-A INPUT -p tcp -m tcp --dport 22 -j IN-filtered-ssh
+-A IN-filtered-ssh -s 127.0.0.1 -j ACCEPT -m comment --comment "Your IP Address"
+-A IN-filtered-ssh -j DROP
+COMMIT

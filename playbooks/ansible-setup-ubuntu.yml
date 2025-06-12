@@ -1,19 +1,18 @@
 ---
-- name: Setup Ansible server
-  hosts: ansible
+- name: Setup Ansible server (Ubuntu/Debian)
+  hosts: ansible_ubuntu
 
   pre_tasks:
     - name: Check if essential variables are defined
       assert:
         that:
-          - server_id is defined
           - hostname is defined
         fail_msg: "Essential variables are not defined."
       tags: always
 
   roles:
-  - name: ansible-setup
-    tags: ansible-setup
+    - name: ansible-setup-ubuntu
+      tags: ansible-setup-ubuntu
 
-  - name: ssh-public-keys
-    tags: ssh-public-keys
+    - name: ssh-public-keys
+      tags: ssh-public-keys

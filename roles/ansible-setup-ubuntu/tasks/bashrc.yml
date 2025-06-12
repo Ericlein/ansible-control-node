@@ -1,0 +1,21 @@
+- name: Set Vault credentials as facts from environment
+  set_fact:
+    vault_role_id: "{{ lookup('env', 'VAULT_ROLE_ID') }}"
+    vault_secret_id: "{{ lookup('env', 'VAULT_SECRET_ID') }}"
+
+- name: Add Vault and Ansible configuration to .bashrc
+  blockinfile:
+    path: "/home/{{ item.name }}/.bashrc"
+    create: yes
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0644'
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - VAULT AND ANSIBLE CONFIG"
+    block: |
+      alias ansible-playbook='sudo -E ansible-playbook'
+      export VAULT_ADDR="{{ vault_addr }}"
+      export VAULT_SECRET_ID="{{ vault_secret_id }}"
+      export VAULT_ROLE_ID="{{ vault_role_id }}"
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"

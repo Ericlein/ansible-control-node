@@ -1,0 +1,4 @@
+- name: Install Vault
+  ansible.builtin.apt:
+    name: vault
+    state: present

@@ -1,0 +1,10 @@
+- name: Install Python 3.11 and related packages
+  ansible.builtin.apt:
+    name: "{{ python_packages }}"
+    state: present
+
+- name: Ensure pip is up to date for Python 3.11
+  ansible.builtin.pip:
+    name: pip
+    executable: python3.11
+    state: latest

@@ -1,0 +1,18 @@
+python_version: "3.11"
+vault_repo_url: "https://apt.releases.hashicorp.com"
+required_packages:
+  - wget
+  - curl
+  - gpg
+  - lsb-release
+  - software-properties-common
+  - apt-transport-https
+  - ca-certificates
+  - git
+
+python_packages:
+  - python3.11
+  - python3.11-pip
+  - python3.11-venv
+  - python3.11-dev
+  - python3-pip

@@ -1,0 +1,106 @@
+- name: Include SSH keys
+  include_vars:
+    file: "/root/ansible/roles/ssh-public-keys/vars/main.yml"
+
+- name: Get SSH users to create
+  set_fact:
+    users: "{{ ssh_users | selectattr('name', 'in', create_users) | list }}"
+
+- name: Create a new user
+  user:
+    name: "{{ item.name }}"
+    create_home: yes
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create .ssh directory for each user
+  file:
+    path: "/home/{{ item.name }}/.ssh"
+    state: directory
+    mode: '0700'
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Add each users SSH key to authorized keys
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.ssh_key }}"
+    state: present
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Copy root's private key to each user
+  copy:
+    remote_src: yes
+    src: "~/.ssh/id_rsa"
+    dest: "/home/{{ item.name }}/.ssh/id_rsa"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0600'
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Copy root's public key to each user
+  copy:
+    remote_src: yes
+    src: "~/.ssh/id_rsa.pub"
+    dest: "/home/{{ item.name }}/.ssh/id_rsa.pub"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0644'
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Check if git repository exists for user
+  stat:
+    path: "/home/{{ item.name }}/ansible/.git"
+  register: git_repo_exists
+  with_items: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Configure Git safe.directory for repository
+  shell: |
+    git config --global --add safe.directory /home/{{ item.item.name }}/ansible
+  with_items: "{{ git_repo_exists.results }}"
+  when: not item.stat.exists
+  loop_control:
+    label: "{{ item.item.name }}"
+
+- name: Setup git repository for users
+  include_tasks: git.yml
+  vars:
+    dest: "/home/{{ item.item.name }}/ansible"
+  with_items: "{{ git_repo_exists.results }}"
+  when: not item.stat.exists
+  loop_control:
+    label: "{{ item.item.name }}"
+
+- name: Fix git repository ownership
+  file:
+    path: "/home/{{ item.item.name }}/ansible"
+    owner: "{{ item.item.name }}"
+    group: "{{ item.item.name }}"
+    recurse: yes
+  with_items: "{{ git_repo_exists.results }}"
+  when: not item.stat.exists
+  loop_control:
+    label: "{{ item.item.name }}"
+
+- name: Add users to sudoers
+  lineinfile:
+    path: /etc/sudoers.d/ansible-users
+    line: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+    state: present
+    mode: '0440'
+    create: yes
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"

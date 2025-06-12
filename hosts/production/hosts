@@ -1,5 +1,5 @@
-[ansible]
-ansible_server ansible_host=127.0.0.1 hostname=ansible.com server_id=XXXXX
+[ansible_rhel]
+ansible_server ansible_host=YOUR_SERVER_IP hostname=YOUR_HOSTNAME
 
-[vault]
-vault_server ansible_host=127.0.0.1 hostname=vault.com server_id=XXXXX
+[ansible_ubuntu]
+ansible_server ansible_host=YOUR_SERVER_IP hostname=YOUR_HOSTNAME

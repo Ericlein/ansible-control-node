@@ -1,0 +1,9 @@
+- name: Install python packages
+  ansible.builtin.pip:
+    name: 
+      - hvac 
+      - PyMySQL
+      - jmespath
+      - passlib
+      - "pywinrm>=0.3.0"
+    executable: "python3.11 -m pip"
