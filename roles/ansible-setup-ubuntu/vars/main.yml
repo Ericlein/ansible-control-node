@@ -10,6 +10,8 @@ create_users:
 ssh_allowed_ips:
   - "YOUR_IP_ADDRESS"  # Replace with your actual IP
 
+ansible_git_repo: "git@github.com:your-username/ansible.git"
+
 required_packages:
   - wget
   - curl

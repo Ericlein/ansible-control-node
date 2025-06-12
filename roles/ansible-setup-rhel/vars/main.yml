@@ -10,6 +10,8 @@ create_users:
   - eric
   - ansible
 
+ansible_git_repo: "git@github.com:your-username/ansible.git"
+
 # SSH allowed IPs for iptables (add your actual IPs)
 ssh_allowed_ips:
   - "YOUR_IP_ADDRESS"  # Replace with your actual IP

@@ -1,6 +1,6 @@
 - name: git checkout from github
   ansible.builtin.git:
-    repo: git@github.com:username/ansible.git
+    repo: "{{ ansible_git_repo }}"
     dest: /root/ansible
     update: no
     accept_newhostkey: true
