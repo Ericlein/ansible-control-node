@@ -1,4 +1,0 @@
-- name: Install HashiCorp packages
-  ansible.builtin.yum:
-    name: "{{ hashicorp_packages }}"
-    state: present

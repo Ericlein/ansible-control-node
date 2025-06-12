@@ -1,4 +1,0 @@
-- name: Install required packages
-  ansible.builtin.yum:
-    name: "{{ required_packages }}"
-    state: present
