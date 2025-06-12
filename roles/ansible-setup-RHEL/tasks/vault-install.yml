@@ -1,4 +1,4 @@
-- name: Install Vault
+- name: Install HashiCorp packages
   ansible.builtin.yum:
-    name: vault
+    name: "{{ hashicorp_packages }}"
     state: present

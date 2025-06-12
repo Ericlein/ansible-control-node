@@ -1,6 +1,6 @@
-- name: Install Python 3.11
+- name: Install Python packages
   ansible.builtin.yum:
-    name: python3.11
+    name: "{{ python_packages }}"
     state: present
 
 - name: Download get-pip.py

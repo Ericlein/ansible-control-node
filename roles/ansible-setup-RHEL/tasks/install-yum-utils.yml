@@ -1,4 +1,4 @@
-- name: Install yum-utils
+- name: Install required packages
   ansible.builtin.yum:
-    name: yum-utils
+    name: "{{ required_packages }}"
     state: present

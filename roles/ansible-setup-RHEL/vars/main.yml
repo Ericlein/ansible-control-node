@@ -1,0 +1,23 @@
+python_version: "3.11"
+vault_repo_url: "https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"
+vault_gpg_key: "https://rpm.releases.hashicorp.com/gpg"
+
+required_packages:
+  - yum-utils
+  - git
+  - wget
+  - curl
+
+python_packages:
+  - python3.11
+
+pip_packages:
+  - hvac 
+  - PyMySQL
+  - jmespath
+  - passlib
+  - "pywinrm>=0.3.0"
+
+# HashiCorp packages
+hashicorp_packages:
+  - vault

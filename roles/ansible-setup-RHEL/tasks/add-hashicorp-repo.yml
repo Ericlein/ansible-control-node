@@ -1,4 +1,4 @@
 - name: Add HashiCorp repository
-  ansible.builtin.command: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+  ansible.builtin.command: yum-config-manager --add-repo {{ vault_repo_url }}
   args:
     creates: /etc/yum.repos.d/hashicorp.repo
