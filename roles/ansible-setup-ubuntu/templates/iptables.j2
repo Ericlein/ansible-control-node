@@ -9,6 +9,7 @@
 
 # SSH filtering
 -A INPUT -p tcp -m tcp --dport 22 -j IN-filtered-ssh
+{% for allowed_ip in ssh_allowed_ips %}
 -A IN-filtered-ssh -s {{ allowed_ip }} -j ACCEPT -m comment --comment "Allowed IP: {{ allowed_ip }}"
 {% endfor %}
 -A IN-filtered-ssh -j DROP
