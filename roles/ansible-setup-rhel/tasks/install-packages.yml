@@ -1,12 +1,4 @@
-- name: Install yum-utils
-  ansible.builtin.yum:
-    name: yum-utils
-    state: present
-
 - name: Install required system packages
   ansible.builtin.yum:
-    name:
-      - git
-      - wget
-      - curl
+    name: "{{ required_packages }}"
     state: present

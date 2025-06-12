@@ -62,14 +62,14 @@
   stat:
     path: "/home/{{ item.name }}/ansible/.git"
   register: git_repo_exists
-  with_items: "{{ users }}"
+  loop: "{{ users }}"
   loop_control:
     label: "{{ item.name }}"
 
 - name: Configure Git safe.directory for repository
   shell: |
     git config --global --add safe.directory /home/{{ item.item.name }}/ansible
-  with_items: "{{ git_repo_exists.results }}"
+  loop: "{{ git_repo_exists.results }}"
   when: not item.stat.exists
   loop_control:
     label: "{{ item.item.name }}"
@@ -78,7 +78,7 @@
   include_tasks: git.yml
   vars:
     dest: "/home/{{ item.item.name }}/ansible"
-  with_items: "{{ git_repo_exists.results }}"
+  loop: "{{ git_repo_exists.results }}"
   when: not item.stat.exists
   loop_control:
     label: "{{ item.item.name }}"
@@ -89,7 +89,7 @@
     owner: "{{ item.item.name }}"
     group: "{{ item.item.name }}"
     recurse: yes
-  with_items: "{{ git_repo_exists.results }}"
+  loop: "{{ git_repo_exists.results }}"
   when: not item.stat.exists
   loop_control:
     label: "{{ item.item.name }}"
