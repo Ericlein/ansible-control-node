@@ -1,0 +1,11 @@
+# Default values for Infisical configuration
+# These can be overridden in playbooks, inventory, or command line
+
+# Infisical server URL (your self-hosted instance)
+infisical_url: "YOUR_SERVER_URL"
+
+# Default environment slug
+infisical_env_slug: "dev"
+
+# Default secrets path
+infisical_secrets_path: "/"

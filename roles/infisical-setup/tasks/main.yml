@@ -1,0 +1,11 @@
+- import_tasks: infisical-pip-packages.yml
+  tags: infisical-pip-packages
+
+- import_tasks: infisical-collection.yml
+  tags: infisical-collection
+
+- import_tasks: infisical-environment.yml
+  tags: infisical-environment
+
+- import_tasks: bashrc-infisical.yml
+  tags: bashrc-infisical

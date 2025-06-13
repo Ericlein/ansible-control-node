@@ -1,0 +1,26 @@
+---
+- name: Setup Ansible server (Ubuntu/Debian) - With Infisical
+  hosts: ansible_ubuntu
+
+  pre_tasks:
+    - name: Check if essential variables are defined
+      assert:
+        that:
+          - ansible_git_repo is defined
+          - ssh_allowed_ips is defined
+          - ssh_allowed_ips | length > 0
+        fail_msg: "Essential variables are not defined."
+      tags: always
+
+  roles:
+    - name: ssh-public-keys
+      tags: ssh-public-keys
+
+    - name: ansible-setup-ubuntu
+      tags: ansible-setup-ubuntu
+
+    - name: ansible-setup-common
+      tags: ansible-setup-common
+      
+    - name: infisical-setup
+      tags: infisical-setup

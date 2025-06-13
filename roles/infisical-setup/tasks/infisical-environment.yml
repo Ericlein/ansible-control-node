@@ -1,0 +1,22 @@
+- name: Check if Infisical credentials are available
+  ansible.builtin.fail:
+    msg: "Required environment variables INFISICAL_CLIENT_ID and/or INFISICAL_CLIENT_SECRET are not set. Set them in environment or pass them using -e 'infisical_client_id=VALUE infisical_client_secret=VALUE'"
+  when: (lookup('env', 'INFISICAL_CLIENT_ID') == '' or lookup('env', 'INFISICAL_CLIENT_SECRET') == '') and 
+        (infisical_client_id is not defined or infisical_client_secret is not defined)
+
+- name: Set Infisical credentials as facts
+  set_fact:
+    infisical_client_id: "{{ infisical_client_id | default(lookup('env', 'INFISICAL_CLIENT_ID')) }}"
+    infisical_client_secret: "{{ infisical_client_secret | default(lookup('env', 'INFISICAL_CLIENT_SECRET')) }}"
+    infisical_project_id: "{{ infisical_project_id | default(lookup('env', 'INFISICAL_PROJECT_ID')) }}"
+    infisical_url: "{{ infisical_url }}"
+
+- name: Add Infisical environment variables to root .bashrc
+  ansible.builtin.blockinfile:
+    path: "{{ lookup('env', 'HOME') }}/.bashrc"
+    block: |
+      export INFISICAL_URL="{{ infisical_url }}"
+      export INFISICAL_CLIENT_ID="{{ infisical_client_id }}"
+      export INFISICAL_CLIENT_SECRET="{{ infisical_client_secret }}"
+      export INFISICAL_PROJECT_ID="{{ infisical_project_id }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - INFISICAL CONFIGURATION"

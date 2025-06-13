@@ -7,6 +7,8 @@ PLAYBOOK_RHEL ?= playbooks/ansible-setup-rhel-vault.yml
 PLAYBOOK_RHEL_NO_VAULT ?= playbooks/ansible-setup-rhel.yml
 PLAYBOOK_UBUNTU ?= playbooks/ansible-setup-ubuntu-vault.yml
 PLAYBOOK_UBUNTU_NO_VAULT ?= playbooks/ansible-setup-ubuntu.yml
+PLAYBOOK_RHEL_INFISICAL ?= playbooks/ansible-setup-rhel-infisical.yml
+PLAYBOOK_UBUNTU_INFISICAL ?= playbooks/ansible-setup-ubuntu-infisical.yml
 USERS ?= eric,ansible
 ANSIBLE_OPTS ?= 
 LIMIT ?= all
@@ -66,6 +68,20 @@ deploy-ubuntu: ## Deploy to Ubuntu/Debian systems with Vault
 deploy-ubuntu-no-vault: ## Deploy to Ubuntu/Debian systems without Vault
 	@echo "$(GREEN)Deploying to Ubuntu systems without Vault...$(NC)"
 	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_UBUNTU_NO_VAULT) --limit ansible_ubuntu $(ANSIBLE_OPTS)
+
+deploy-infisical: ## Deploy to all systems with Infisical
+	@echo "$(GREEN)Deploying to RHEL systems with Infisical...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_RHEL_INFISICAL) --limit ansible_rhel $(ANSIBLE_OPTS) || true
+	@echo "$(GREEN)Deploying to Ubuntu systems with Infisical...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_UBUNTU_INFISICAL) --limit ansible_ubuntu $(ANSIBLE_OPTS) || true
+
+deploy-rhel-infisical: ## Deploy to RHEL/CentOS systems with Infisical
+	@echo "$(GREEN)Deploying to RHEL systems with Infisical...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_RHEL_INFISICAL) --limit ansible_rhel $(ANSIBLE_OPTS)
+
+deploy-ubuntu-infisical: ## Deploy to Ubuntu/Debian systems with Infisical
+	@echo "$(GREEN)Deploying to Ubuntu systems with Infisical...$(NC)"
+	@ansible-playbook -i $(INVENTORY) $(PLAYBOOK_UBUNTU_INFISICAL) --limit ansible_ubuntu $(ANSIBLE_OPTS)
 
 check: ## Check playbook syntax
 	@echo "$(GREEN)Checking RHEL playbook syntax...$(NC)"

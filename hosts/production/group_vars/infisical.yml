@@ -1,0 +1,7 @@
+# Infisical configuration
+infisical_url: "YOUR_INFISICAL_URL"  # Change to your Infisical server URL
+infisical_env_slug: "dev"
+infisical_secrets_path: "/"
+
+# Project ID can be set here or via environment variable
+# infisical_project_id: "your-project-id"

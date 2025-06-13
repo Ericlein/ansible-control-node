@@ -1,0 +1,12 @@
+# Infisical-specific pip packages
+infisical_pip_packages:
+  - "infisical-python>=1.0.0"
+  - "python-dotenv>=1.0.0"
+
+# Users to create (referenced in bashrc-infisical.yml)
+create_users:
+  - eric
+  - ansible
+
+# Python version (inherited from common vars)
+python_version: "3.11"

@@ -1,0 +1,7 @@
+- name: reload iptables
+  ansible.builtin.shell: iptables-restore < /etc/iptables/rules.v4
+  become: yes
+
+- name: source bashrc
+  ansible.builtin.shell: source ~/.bashrc
+  become: no

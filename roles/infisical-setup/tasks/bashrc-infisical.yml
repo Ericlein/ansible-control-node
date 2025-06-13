@@ -1,0 +1,31 @@
+- name: Include SSH keys to get users
+  include_vars:
+    file: "/root/ansible-control-node/roles/ssh-public-keys/vars/main.yml"
+
+- name: Get SSH users to configure
+  set_fact:
+    users: "{{ ssh_users | selectattr('name', 'in', create_users) | list }}"
+
+- name: Set Infisical credentials as facts from environment
+  set_fact:
+    infisical_client_id: "{{ infisical_client_id | default(lookup('env', 'INFISICAL_CLIENT_ID')) }}"
+    infisical_client_secret: "{{ infisical_client_secret | default(lookup('env', 'INFISICAL_CLIENT_SECRET')) }}"
+    infisical_project_id: "{{ infisical_project_id | default(lookup('env', 'INFISICAL_PROJECT_ID')) }}"
+
+- name: Add Infisical and Ansible configuration to user .bashrc
+  blockinfile:
+    path: "/home/{{ item.name }}/.bashrc"
+    create: yes
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0644'
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - INFISICAL AND ANSIBLE CONFIG"
+    block: |
+      alias ansible-playbook='sudo -E ansible-playbook'
+      export INFISICAL_URL="{{ infisical_url }}"
+      export INFISICAL_CLIENT_ID="{{ infisical_client_id }}"
+      export INFISICAL_CLIENT_SECRET="{{ infisical_client_secret }}"
+      export INFISICAL_PROJECT_ID="{{ infisical_project_id }}"
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"

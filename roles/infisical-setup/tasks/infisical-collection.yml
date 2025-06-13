@@ -1,0 +1,10 @@
+- name: Install Infisical Ansible collection
+  ansible.builtin.command: ansible-galaxy collection install infisical.vault
+  register: infisical_collection_install
+  changed_when: "'infisical.vault' in infisical_collection_install.stdout"
+
+- name: Verify Infisical collection is installed
+  ansible.builtin.command: ansible-galaxy collection list infisical.vault
+  register: collection_list
+  changed_when: false
+  failed_when: "'infisical.vault' not in collection_list.stdout"
