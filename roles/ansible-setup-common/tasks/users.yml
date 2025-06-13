@@ -77,7 +77,7 @@
 - name: Setup git repository for users
   include_tasks: git.yml
   vars:
-    dest: "/home/{{ item.item.name }}/ansible"
+    git_dest: "/home/{{ item.item.name }}/ansible"
   loop: "{{ git_repo_exists.results }}"
   when: not item.stat.exists
   loop_control:
