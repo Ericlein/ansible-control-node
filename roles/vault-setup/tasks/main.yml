@@ -1,3 +1,6 @@
+- import_tasks: vault-pip-packages.yml
+  tags: vault-pip-packages
+
 - import_tasks: vault-install.yml
   tags: vault-install
 

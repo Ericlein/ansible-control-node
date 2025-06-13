@@ -1,0 +1,4 @@
+- name: Install Vault-specific python packages
+  ansible.builtin.pip:
+    name: "{{ vault_pip_packages }}"
+    executable: "python{{ python_version }} -m pip"
