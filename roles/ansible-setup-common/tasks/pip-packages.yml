@@ -1,0 +1,4 @@
+- name: Install python packages
+  ansible.builtin.pip:
+    name: "{{ pip_packages }}"
+    executable: "python{{ python_version }} -m pip"

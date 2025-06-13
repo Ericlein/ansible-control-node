@@ -1,0 +1,8 @@
+- name: git checkout from github
+  ansible.builtin.git:
+    repo: "{{ ansible_git_repo }}"
+    dest: "{{ git_dest | default('/root/ansible-control-node') }}"
+    update: no
+    accept_newhostkey: true
+  environment:
+    GIT_TERMINAL_PROMPT: "0"

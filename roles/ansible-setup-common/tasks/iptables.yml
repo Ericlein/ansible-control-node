@@ -1,0 +1,32 @@
+- name: Install iptables-persistent (Ubuntu/Debian)
+  ansible.builtin.apt:
+    name: iptables-persistent
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install iptables-persistent (RHEL/CentOS)
+  ansible.builtin.yum:
+    name: iptables-persistent
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Create iptables directory
+  ansible.builtin.file:
+    path: /etc/iptables
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Configure iptables rules from template
+  ansible.builtin.template:
+    src: iptables.j2
+    dest: /etc/iptables/rules.v4
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload iptables
+
+- name: Save current iptables rules
+  ansible.builtin.shell: iptables-save > /etc/iptables/rules.v4
+  changed_when: false
