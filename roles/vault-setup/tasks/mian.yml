@@ -1,0 +1,8 @@
+- import_tasks: vault-install.yml
+  tags: vault-install
+
+- import_tasks: vault-environment.yml
+  tags: vault-environment
+
+- import_tasks: bashrc-vault.yml
+  tags: bashrc-vault

@@ -1,0 +1,36 @@
+- name: Install Vault (RHEL/CentOS)
+  block:
+    - name: Add HashiCorp repository
+      ansible.builtin.command: yum-config-manager --add-repo {{ vault_repo_url_rhel }}
+      args:
+        creates: /etc/yum.repos.d/hashicorp.repo
+
+    - name: Import HashiCorp GPG key
+      ansible.builtin.rpm_key:
+        key: "{{ vault_gpg_key_rhel }}"
+        state: present
+
+    - name: Install HashiCorp packages
+      ansible.builtin.yum:
+        name: "{{ hashicorp_packages }}"
+        state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install Vault (Ubuntu/Debian)
+  block:
+    - name: Add HashiCorp GPG key
+      ansible.builtin.apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add HashiCorp repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+        state: present
+        update_cache: yes
+
+    - name: Install Vault
+      ansible.builtin.apt:
+        name: vault
+        state: present
+  when: ansible_os_family == "Debian"

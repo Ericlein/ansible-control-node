@@ -10,7 +10,7 @@
     vault_secret_id: "{{ lookup('env', 'VAULT_SECRET_ID') }}"
     vault_addr: "{{ vault_addr }}"
 
-- name: Add Vault environment variables to .bashrc
+- name: Add Vault environment variables to root .bashrc
   ansible.builtin.blockinfile:
     path: "{{ lookup('env', 'HOME') }}/.bashrc"
     block: |

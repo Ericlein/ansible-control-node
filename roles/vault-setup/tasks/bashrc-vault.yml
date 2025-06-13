@@ -1,9 +1,17 @@
+- name: Include SSH keys to get users
+  include_vars:
+    file: "/root/ansible-control-node/roles/ssh-public-keys/vars/main.yml"
+
+- name: Get SSH users to configure
+  set_fact:
+    users: "{{ ssh_users | selectattr('name', 'in', create_users) | list }}"
+
 - name: Set Vault credentials as facts from environment
   set_fact:
     vault_role_id: "{{ lookup('env', 'VAULT_ROLE_ID') }}"
     vault_secret_id: "{{ lookup('env', 'VAULT_SECRET_ID') }}"
 
-- name: Add Vault and Ansible configuration to .bashrc
+- name: Add Vault and Ansible configuration to user .bashrc
   blockinfile:
     path: "/home/{{ item.name }}/.bashrc"
     create: yes

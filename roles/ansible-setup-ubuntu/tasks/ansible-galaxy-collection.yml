@@ -1,8 +1,0 @@
-- name: Copy Ansible Galaxy community.general collection tarball
-  copy:
-    src: community-general-10.5.0.tar.gz
-    dest: /usr/local/src/community-general-10.5.0.tar.gz
-    mode: '0644'
-
-- name: Install community.general collection
-  command: ansible-galaxy collection install /usr/local/src/community-general-10.5.0.tar.gz

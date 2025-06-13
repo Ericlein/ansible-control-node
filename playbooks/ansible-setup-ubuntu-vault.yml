@@ -18,6 +18,9 @@
 
     - name: ansible-setup-ubuntu
       tags: ansible-setup-ubuntu
-      
+
     - name: ansible-setup-common
       tags: ansible-setup-common
+      
+    - name: vault-setup
+      tags: vault-setup

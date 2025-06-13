@@ -1,0 +1,12 @@
+# Vault-specific variables
+vault_repo_url_rhel: "https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"
+vault_gpg_key_rhel: "https://rpm.releases.hashicorp.com/gpg"
+
+hashicorp_vault_version: "1.15.0"
+
+hashicorp_packages:
+  - vault
+
+# Vault-specific pip packages
+vault_pip_packages:
+  - "hvac>=1.2.0,<2.0.0"

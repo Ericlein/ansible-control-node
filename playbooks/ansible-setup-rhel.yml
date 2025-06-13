@@ -1,5 +1,5 @@
 ---
-- name: Setup Ansible server (RHEL/CentOS)
+- name: Setup Ansible server (RHEL/CentOS) - No Vault
   hosts: ansible_rhel
 
   pre_tasks:
@@ -19,3 +19,5 @@
     - name: ansible-setup-rhel
       tags: ansible-setup-rhel
       
+    - name: ansible-setup-common
+      tags: ansible-setup-common

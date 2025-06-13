@@ -1,6 +1,6 @@
 ---
-- name: Setup Ansible server (Ubuntu/Debian)
-  hosts: ansible_ubuntu
+- name: Setup Ansible server (RHEL/CentOS) - With Vault
+  hosts: ansible_rhel
 
   pre_tasks:
     - name: Check if essential variables are defined
@@ -16,8 +16,11 @@
     - name: ssh-public-keys
       tags: ssh-public-keys
 
-    - name: ansible-setup-ubuntu
-      tags: ansible-setup-ubuntu
-      
+    - name: ansible-setup-rhel
+      tags: ansible-setup-rhel
+
     - name: ansible-setup-common
       tags: ansible-setup-common
+
+    - name: vault-setup
+      tags: vault-setup
